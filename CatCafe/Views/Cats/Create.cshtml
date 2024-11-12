@@ -1,0 +1,63 @@
+﻿@model CatCafe.ViewModels.CatViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Cat</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Cat.Name" class="control-label"></label>
+                <input asp-for="Cat.Name" class="form-control" />
+                <span asp-validation-for="Cat.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cat.Age" class="control-label"></label>
+                <input asp-for="Cat.Age" class="form-control" />
+                <span asp-validation-for="Cat.Age" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cat.Description" class="control-label"></label>
+                <input asp-for="Cat.Description" class="form-control" />
+                <span asp-validation-for="Cat.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Cat.Adoptable" /> @Html.DisplayNameFor(model => model.Cat.Adoptable)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cat.DateOfArrival" class="control-label"></label>
+                <input asp-for="Cat.DateOfArrival" class="form-control" />
+                <span asp-validation-for="Cat.DateOfArrival" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cat.DateOfAcquisition" class="control-label"></label>
+                <input asp-for="Cat.DateOfAcquisition" class="form-control" />
+                <span asp-validation-for="Cat.DateOfAcquisition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cat.Status" class="control-label"></label>
+                <select asp-for="Cat.Status" class="form-control" asp-items="Model.StatusList" ></select>
+                <span asp-validation-for="Cat.Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
