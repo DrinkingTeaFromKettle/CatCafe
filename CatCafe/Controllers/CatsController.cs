@@ -15,10 +15,12 @@ namespace CatCafe.Controllers
     {
         private readonly CatCafeDbContext _context;
 
+
         public CatsController(CatCafeDbContext context)
         {
             _context = context;
         }
+
 
         // GET: Cats
         public async Task<IActionResult> Index()
@@ -63,7 +65,7 @@ namespace CatCafe.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Age,Description,Adoptable,DateOfArrival,DateOfAcquisition,Status")] Cat cat)
+        public async Task<IActionResult> Create([FromForm] Cat cat)
         {
             if (ModelState.IsValid)
             {
@@ -76,7 +78,7 @@ namespace CatCafe.Controllers
         }
 
         // GET: Cats/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit([FromRoute] Guid? id)
         {
             if (id == null)
             {
@@ -106,7 +108,7 @@ namespace CatCafe.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Age,Description,Adoptable,DateOfArrival,DateOfAcquisition,Status")] Cat cat)
+        public async Task<IActionResult> Edit([FromRoute] Guid id, [FromForm] Cat cat)
         {
             if (id != cat.Id)
             {
