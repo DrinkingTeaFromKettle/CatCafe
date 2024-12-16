@@ -128,6 +128,10 @@ namespace CatCafe.Areas.Identity.Pages.Account
                     {
                         IdentityResult roleresult = await _userManager.AddToRoleAsync(user, defaultrole.Name);
                     }
+                    else 
+                    {
+                        throw new Exception("Role 'User' does not exist");
+                    }
 
                     _logger.LogInformation("User created a new account with password.");
 
