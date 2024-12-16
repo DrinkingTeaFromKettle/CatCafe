@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CatCafe.Data;
 using CatCafe.DataModels;
 using CatCafe.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CatCafe.Controllers
 {
@@ -47,6 +44,7 @@ namespace CatCafe.Controllers
         }
 
         // GET: Cats/Create
+        [Authorize(Roles = "Employee, Admin")]
         public IActionResult Create()
         {
             var model = new CatViewModel
@@ -64,6 +62,7 @@ namespace CatCafe.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Employee, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromForm] Cat cat)
         {
@@ -78,6 +77,7 @@ namespace CatCafe.Controllers
         }
 
         // GET: Cats/Edit/5
+        [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Edit([FromRoute] Guid? id)
         {
             if (id == null)
@@ -107,6 +107,7 @@ namespace CatCafe.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Employee, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute] Guid id, [FromForm] Cat cat)
         {
@@ -139,6 +140,7 @@ namespace CatCafe.Controllers
         }
 
         // GET: Cats/Delete/5
+        [Authorize(Roles = "Employee, Admin")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -158,6 +160,7 @@ namespace CatCafe.Controllers
 
         // POST: Cats/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Employee, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
