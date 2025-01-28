@@ -41,7 +41,11 @@
                     @Html.DisplayFor(modelItem => item.EmailConfirmed)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Roles)
+                @foreach (var role in item.Roles)
+                {
+                    @Html.DisplayFor(modelItem => role)
+                    <br/>
+                }
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |
