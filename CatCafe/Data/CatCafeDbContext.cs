@@ -57,6 +57,7 @@ public class CatCafeDbContext : IdentityDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        
         if(WebApplication.CreateBuilder().Environment.IsDevelopment())
             modelBuilder.Entity<Cat>()
                 .Property(c => c.CreatedOn)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CatCafe.DataModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace CatCafe.Data
@@ -7,14 +8,15 @@ namespace CatCafe.Data
     {
         private static RoleManager<IdentityRole>? _roleManager;
 
-        public static async Task InitializeAsync(IServiceProvider serviceProvider)
+        public static async Task InitializeAsync(RoleManager<IdentityRole> roleManager)
         {
-            _roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            _roleManager = roleManager;
             if (_roleManager != null)
             {
-                await CreateRole("Admin");
-                await CreateRole("Employee");
-                await CreateRole("User");
+                foreach(var role in Role.GetValues<Role>())
+                {
+                    await CreateRole(role.ToString());
+                }
             }
         }
 

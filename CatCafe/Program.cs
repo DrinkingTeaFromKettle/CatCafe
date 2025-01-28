@@ -5,6 +5,7 @@ using CatCafe.Controllers;
 using Microsoft.Extensions.Options;
 using CatCafe.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -69,6 +70,11 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await SeedData.InitializeAsync(roleManager);
+}
 
 app.MapControllerRoute(
     name: "default",
