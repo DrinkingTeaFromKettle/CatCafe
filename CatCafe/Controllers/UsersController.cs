@@ -13,12 +13,12 @@ namespace CatCafe.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IUserStore<IdentityUser> _userStore;
-        private readonly IUserEmailStore<IdentityUser> _emailStore;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
+        private readonly IUserEmailStore<ApplicationUser> _emailStore;
 
-        public UsersController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IUserStore<IdentityUser> userStore)
+        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, IUserStore<ApplicationUser> userStore)
         {
             _roleManager = roleManager;
             _userManager = userManager;
@@ -27,7 +27,7 @@ namespace CatCafe.Controllers
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            _emailStore = (IUserEmailStore<IdentityUser>)_userStore;
+            _emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
         }
 
         [Authorize(Roles = "Admin")]
@@ -35,7 +35,7 @@ namespace CatCafe.Controllers
         {
             var users = await _userManager.Users.ToListAsync();
             var userRolesViewModel = new List<UserDetailsViewModel>();
-            foreach (IdentityUser user in users)
+            foreach (ApplicationUser user in users)
             {
                 var thisViewModel = new UserDetailsViewModel();
                 thisViewModel.UserId = user.Id;
@@ -88,10 +88,10 @@ namespace CatCafe.Controllers
         {
             if (ModelState.IsValid)
             {
-                var identityUser = new IdentityUser();
-                await _userStore.SetUserNameAsync(identityUser, user.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(identityUser, user.Email, CancellationToken.None);
-                var result = await _userManager.CreateAsync(identityUser, user.Password);
+                var ApplicationUser = new ApplicationUser();
+                await _userStore.SetUserNameAsync(ApplicationUser, user.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(ApplicationUser, user.Email, CancellationToken.None);
+                var result = await _userManager.CreateAsync(ApplicationUser, user.Password);
 
                 if (result.Succeeded)
                 { 
@@ -100,15 +100,15 @@ namespace CatCafe.Controllers
                         var role = _roleManager.FindByNameAsync(userRole.ToString()).Result;
                         if (role != null)
                         {
-                            IdentityResult roleresult = await _userManager.AddToRoleAsync(identityUser, role.Name);
+                            IdentityResult roleresult = await _userManager.AddToRoleAsync(ApplicationUser, role.Name);
                         }
                         else
                         {
                             throw new Exception("Role "+role.ToString()+" does not exist");
                         }
                     }
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
-                    await _userManager.ConfirmEmailAsync(identityUser, code);
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(ApplicationUser);
+                    await _userManager.ConfirmEmailAsync(ApplicationUser, code);
                     
                 }
             }
@@ -142,7 +142,7 @@ namespace CatCafe.Controllers
             {
                 User = new UserEditInputViewModel
                 {
-                    Id = new Guid(user.Id),
+                    Id = user.Id,
                     Email = user.Email,
                     Role = rolesList
                 },
@@ -166,21 +166,21 @@ namespace CatCafe.Controllers
             ModelState.Remove("Password");
             if (ModelState.IsValid)
             {
-                var identityUser = await _userManager.FindByIdAsync(id.ToString());
-                if (identityUser == null)
+                var ApplicationUser = await _userManager.FindByIdAsync(id.ToString());
+                if (ApplicationUser == null)
                 {
                     return NotFound();
                 }
-                identityUser.Email = user.Email;
-                await _userManager.UpdateAsync(identityUser);
-                var roles = await _userManager.GetRolesAsync(identityUser);
-                await _userManager.RemoveFromRolesAsync(identityUser, roles);
+                ApplicationUser.Email = user.Email;
+                await _userManager.UpdateAsync(ApplicationUser);
+                var roles = await _userManager.GetRolesAsync(ApplicationUser);
+                await _userManager.RemoveFromRolesAsync(ApplicationUser, roles);
                 foreach (var userRole in user.Role)
                 {
                     var role = _roleManager.FindByNameAsync(userRole.ToString()).Result;
                     if (role != null)
                     {
-                        IdentityResult roleresult = await _userManager.AddToRoleAsync(identityUser, role.Name);
+                        IdentityResult roleresult = await _userManager.AddToRoleAsync(ApplicationUser, role.Name);
                     }
                     else
                     {

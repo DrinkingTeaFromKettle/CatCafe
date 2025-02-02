@@ -4,6 +4,7 @@ using CatCafe.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CatCafe.Migrations
 {
     [DbContext(typeof(CatCafeDbContext))]
-    partial class CatCafeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250131122606_Initial_Redone")]
+    partial class Initial_Redone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +32,7 @@ namespace CatCafe.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ApartmentNumber")
+                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
@@ -105,6 +109,7 @@ namespace CatCafe.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -129,6 +134,7 @@ namespace CatCafe.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SurName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 

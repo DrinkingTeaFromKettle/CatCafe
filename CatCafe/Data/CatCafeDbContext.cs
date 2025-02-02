@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
 using Microsoft.Extensions.Configuration;
 using System.Configuration;
+using Microsoft.AspNetCore.Identity;
 
 namespace CatCafe.Data;
 
-public class CatCafeDbContext : IdentityDbContext
+public class CatCafeDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
     public DbSet<Cat> Cats { get; set; } = null;
     
@@ -57,6 +58,11 @@ public class CatCafeDbContext : IdentityDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ApplicationUser>()
+            .HasOne(e => e.Address)
+            .WithOne(e => e.User)
+            .HasForeignKey<Address>(e => e.UserId)
+            .IsRequired();
         
         if(WebApplication.CreateBuilder().Environment.IsDevelopment())
             modelBuilder.Entity<Cat>()

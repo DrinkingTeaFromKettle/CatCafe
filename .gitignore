@@ -483,3 +483,4 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 /CatCafe/Controllers/InfoController.cs
+/CatCafe/appsettings.json

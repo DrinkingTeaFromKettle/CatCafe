@@ -6,6 +6,9 @@ using Microsoft.Extensions.Options;
 using CatCafe.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Hosting;
+using System.Globalization;
+using CatCafe.DataModels;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -16,8 +19,8 @@ builder.AddServiceDefaults();
 builder.Services.AddDbContext<CatCafeDbContext>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<CatCafeDbContext>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddControllersWithViews();
@@ -72,8 +75,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    await SeedData.InitializeAsync(roleManager);
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    await SeedData.InitializeAsync(roleManager, userManager);
 }
 
 app.MapControllerRoute(
