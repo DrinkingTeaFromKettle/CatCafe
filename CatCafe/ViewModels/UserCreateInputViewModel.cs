@@ -19,6 +19,7 @@ namespace CatCafe.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
+        [Required(ErrorMessage = "{0} is required.")]
         public List<Role> Role { get; set; }
     }
 }

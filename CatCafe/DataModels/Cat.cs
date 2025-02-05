@@ -7,22 +7,22 @@ namespace CatCafe.DataModels
         [Key]
         public Guid Id { get; set; }
         [Required(ErrorMessage = "Cat's name is required")]
-        [StringLength(50)]
+        [StringLength(50, ErrorMessage = "Cat's {0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
         public string Name { get; set; }
         [Required(ErrorMessage = "Cat's age is required")]
-        [Range(0, 50)]
+        [Range(0, 50, ErrorMessage = "Cat's {0} must be between {1} and {2} years old.")]
         public int Age { get; set; }
-        [StringLength(1000)]
-        public string Description { get; set; }
+        [StringLength(1000, ErrorMessage ="Maximal {0} lenght is {1}.")]
+        public string? Description { get; set; }
         [Required(ErrorMessage = "Information, whether this cat is available for adoption is required")]
         public bool Adoptable { get; set; }
-        [Required(ErrorMessage = "Cat's status is required")]
-        [EnumDataType(typeof(CatStatus),ErrorMessage = "Invalid status value" )]
+        [Required(ErrorMessage = "Cat's {0} is required")]
+        [EnumDataType(typeof(CatStatus),ErrorMessage = "Invalid {0} value" )]
         public CatStatus Status { get; set; }
-        [Required(ErrorMessage = "Date of animal's arrival on site is required")]
+        [Required(ErrorMessage = "{0} on site is required")]
         [DataType(DataType.Date)]
         public DateTime DateOfArrival { get; set; }
-        [Required(ErrorMessage = "Date of acquisition is required")]
+        [Required(ErrorMessage = "{0} is required")]
         [DataType(DataType.Date)]
         public DateTime DateOfAcquisition { get; set; }
         [DataType(DataType.Date)]

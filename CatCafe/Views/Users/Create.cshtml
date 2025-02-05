@@ -32,7 +32,9 @@
                 <select asp-for="User.Role" class="form-control" asp-items="Model.Roles"></select>
                 <span asp-validation-for="User.Role" class="text-danger"></span>
             </div> *@
+            <label asp-for="User.Role" class="control-label"></label>
             @Html.ListBoxFor(m => m.User.Role, Model.Roles, new { @class = "form-control", @multiple = "multiple" })
+            <span asp-validation-for="User.Role" class="text-danger"></span>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

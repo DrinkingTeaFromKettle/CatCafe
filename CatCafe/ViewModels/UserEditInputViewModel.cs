@@ -11,6 +11,7 @@ namespace CatCafe.ViewModels
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
+        [Required(ErrorMessage = "{0} is required.")]
         public List<Role> Role { get; set; }
     }
 }

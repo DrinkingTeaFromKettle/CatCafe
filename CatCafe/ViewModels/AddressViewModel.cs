@@ -4,7 +4,11 @@ namespace CatCafe.ViewModels
 {
     public class AddressViewModel
     {
+        [Required(ErrorMessage = "Country name is required")]
+        [StringLength(50)]
         public string Country { get; set; }
+        [StringLength(3)]
+        public string CountryCode { get; set; }
         [Required(ErrorMessage = "City name is required")]
         [StringLength(100)]
         public string City { get; set; }
@@ -15,12 +19,12 @@ namespace CatCafe.ViewModels
         [StringLength(10)]
         public string PostalCode { get; set; }
         [Required(ErrorMessage = "Street name is required")]
-        [StringLength(100)]
+        [StringLength(100, ErrorMessage = "{0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
         public string StreetName { get; set; }
         [Required(ErrorMessage = "Building number is required")]
-        [StringLength(10)]
+        [StringLength(10, ErrorMessage = "{0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
         public string BuildingNumber { get; set; }
-        [StringLength(10)]
+        [StringLength(10, ErrorMessage = "{0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
         public string? ApartmentNumber { get; set; }
     }
 }
