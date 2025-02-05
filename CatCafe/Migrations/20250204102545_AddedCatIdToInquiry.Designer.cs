@@ -4,6 +4,7 @@ using CatCafe.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CatCafe.Migrations
 {
     [DbContext(typeof(CatCafeDbContext))]
-    partial class CatCafeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250204102545_AddedCatIdToInquiry")]
+    partial class AddedCatIdToInquiry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,9 +91,7 @@ namespace CatCafe.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getdate()");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateOfAdoption")
                         .HasColumnType("datetime2");
@@ -101,9 +102,7 @@ namespace CatCafe.Migrations
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("LastUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getdate()");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -113,9 +112,11 @@ namespace CatCafe.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CatId");
+                    b.HasIndex("CatId")
+                        .IsUnique();
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("AdoptionInquiry");
                 });
@@ -223,9 +224,7 @@ namespace CatCafe.Migrations
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("LastUpdated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getdate()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -389,14 +388,14 @@ namespace CatCafe.Migrations
             modelBuilder.Entity("CatCafe.DataModels.AdoptionInquiry", b =>
                 {
                     b.HasOne("CatCafe.DataModels.Cat", "Cat")
-                        .WithMany("AdoptionInquiries")
-                        .HasForeignKey("CatId")
+                        .WithOne("AdoptionInquiry")
+                        .HasForeignKey("CatCafe.DataModels.AdoptionInquiry", "CatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CatCafe.DataModels.ApplicationUser", "User")
-                        .WithMany("AdoptionInquiries")
-                        .HasForeignKey("UserId")
+                        .WithOne("AdoptionInquiry")
+                        .HasForeignKey("CatCafe.DataModels.AdoptionInquiry", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -460,12 +459,12 @@ namespace CatCafe.Migrations
                 {
                     b.Navigation("Address");
 
-                    b.Navigation("AdoptionInquiries");
+                    b.Navigation("AdoptionInquiry");
                 });
 
             modelBuilder.Entity("CatCafe.DataModels.Cat", b =>
                 {
-                    b.Navigation("AdoptionInquiries");
+                    b.Navigation("AdoptionInquiry");
                 });
 #pragma warning restore 612, 618
         }

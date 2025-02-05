@@ -11,7 +11,9 @@ namespace CatCafe.Data;
 public class CatCafeDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
     public DbSet<Cat> Cats { get; set; } = null;
-    
+    public DbSet<CatCafe.DataModels.AdoptionInquiry> AdoptionInquiry { get; set; } = default!;
+
+
     public CatCafeDbContext(DbContextOptions<CatCafeDbContext> options)
         : base(options)
     {
@@ -63,12 +65,36 @@ public class CatCafeDbContext : IdentityDbContext<ApplicationUser, IdentityRole<
             .WithOne(e => e.User)
             .HasForeignKey<Address>(e => e.UserId)
             .IsRequired();
-        
-        if(WebApplication.CreateBuilder().Environment.IsDevelopment())
+
+        modelBuilder.Entity<ApplicationUser>()
+            .HasMany(e => e.AdoptionInquiries)
+            .WithOne(e => e.User)
+            .HasForeignKey(e => e.UserId)
+            .IsRequired();
+
+        modelBuilder.Entity<Cat>()
+            .HasMany(e => e.AdoptionInquiries)
+            .WithOne(e => e.Cat)
+            .HasForeignKey(e => e.CatId)
+            .IsRequired();
+
+        if (WebApplication.CreateBuilder().Environment.IsDevelopment())
+        {
             modelBuilder.Entity<Cat>()
                 .Property(c => c.CreatedOn)
                 .HasDefaultValueSql("getdate()");
+            modelBuilder.Entity<Cat>()
+                .Property(c => c.LastUpdated)
+                .HasDefaultValueSql("getdate()");
+            modelBuilder.Entity<AdoptionInquiry>()
+                .Property(c => c.CreatedOn)
+                .HasDefaultValueSql("getdate()");
+            modelBuilder.Entity<AdoptionInquiry>()
+                .Property(c => c.LastUpdated)
+                .HasDefaultValueSql("getdate()");
+        }
         base.OnModelCreating(modelBuilder);
     }
+
 
 }

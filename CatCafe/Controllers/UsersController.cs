@@ -1,4 +1,5 @@
 ﻿using CatCafe.Areas.Identity.Pages.Account;
+using CatCafe.Data;
 using CatCafe.DataModels;
 using CatCafe.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -17,12 +18,14 @@ namespace CatCafe.Controllers
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
+        private readonly CatCafeDbContext _context;
 
-        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, IUserStore<ApplicationUser> userStore)
+        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, IUserStore<ApplicationUser> userStore, CatCafeDbContext context)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _userStore = userStore;
+            _context = context;
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
@@ -42,6 +45,7 @@ namespace CatCafe.Controllers
                 thisViewModel.Email = user.Email;
                 thisViewModel.EmailConfirmed = user.EmailConfirmed;
                 thisViewModel.Roles = await _userManager.GetRolesAsync(user);
+                thisViewModel.Inquiries = _context.AdoptionInquiry.Where(a => a.UserId == user.Id).ToList();
                 userRolesViewModel.Add(thisViewModel);
             }
             return View(userRolesViewModel);
@@ -65,6 +69,7 @@ namespace CatCafe.Controllers
             thisViewModel.Email = user.Email;
             thisViewModel.EmailConfirmed = user.EmailConfirmed;
             thisViewModel.Roles = await _userManager.GetRolesAsync(user);
+            thisViewModel.Inquiries = _context.AdoptionInquiry.Where(a => a.UserId == id).ToList();
             return View(thisViewModel);
         }
 
@@ -219,6 +224,7 @@ namespace CatCafe.Controllers
                 Email = user.Email,
                 EmailConfirmed = user.EmailConfirmed,
                 Roles = await _userManager.GetRolesAsync(user),
+                Inquiries = _context.AdoptionInquiry.Where(a => a.UserId == id).ToList()
             };
             return View(userDetails);
         }

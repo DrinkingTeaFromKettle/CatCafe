@@ -10,5 +10,6 @@ namespace CatCafe.DataModels
         [StringLength(50)]
         public string? SurName { get; set; }
         public Address? Address { get; set; }
+        public ICollection<AdoptionInquiry>? AdoptionInquiries { get; set; } = new List<AdoptionInquiry>();
     }
 }

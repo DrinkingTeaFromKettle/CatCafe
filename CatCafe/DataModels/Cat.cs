@@ -29,6 +29,6 @@ namespace CatCafe.DataModels
         public DateTime CreatedOn { get; set; }
         [DataType(DataType.Date)]
         public DateTime LastUpdated { get; set; }
-
+        public ICollection<AdoptionInquiry>? AdoptionInquiries { get; set; } = new List<AdoptionInquiry>();
     }
 }

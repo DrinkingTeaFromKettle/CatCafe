@@ -34,6 +34,7 @@ namespace CatCafe.Controllers
             }
 
             var cat = await _context.Cats
+                .Include(a => a.AdoptionInquiries)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (cat == null)
             {

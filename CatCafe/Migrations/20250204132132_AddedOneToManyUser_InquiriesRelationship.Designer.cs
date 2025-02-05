@@ -4,6 +4,7 @@ using CatCafe.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CatCafe.Migrations
 {
     [DbContext(typeof(CatCafeDbContext))]
-    partial class CatCafeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250204132132_AddedOneToManyUser_InquiriesRelationship")]
+    partial class AddedOneToManyUser_InquiriesRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,7 +116,8 @@ namespace CatCafe.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CatId");
+                    b.HasIndex("CatId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -389,8 +393,8 @@ namespace CatCafe.Migrations
             modelBuilder.Entity("CatCafe.DataModels.AdoptionInquiry", b =>
                 {
                     b.HasOne("CatCafe.DataModels.Cat", "Cat")
-                        .WithMany("AdoptionInquiries")
-                        .HasForeignKey("CatId")
+                        .WithOne("AdoptionInquiry")
+                        .HasForeignKey("CatCafe.DataModels.AdoptionInquiry", "CatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -465,7 +469,7 @@ namespace CatCafe.Migrations
 
             modelBuilder.Entity("CatCafe.DataModels.Cat", b =>
                 {
-                    b.Navigation("AdoptionInquiries");
+                    b.Navigation("AdoptionInquiry");
                 });
 #pragma warning restore 612, 618
         }

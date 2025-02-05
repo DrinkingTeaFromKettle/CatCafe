@@ -6,9 +6,12 @@
 
 <h1>Index</h1>
 
+@if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+            {
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+            }
 <table class="table">
     <thead>
         <tr>
@@ -27,6 +30,8 @@
             <th>
                 @Html.DisplayNameFor(model => model.DateOfArrival)
             </th>
+            @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+            {
             <th>
                 @Html.DisplayNameFor(model => model.DateOfAcquisition)
             </th>
@@ -36,6 +41,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.LastUpdated)
             </th>
+            }
             <th>
                 @Html.DisplayNameFor(model => model.Status)
             </th>
@@ -60,6 +66,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.DateOfArrival)
             </td>
+
                 <td>
                     @Html.DisplayFor(modelItem => item.DateOfAcquisition)
                 </td>
@@ -73,10 +80,17 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+            @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+            {
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+            }
+            @if (item.Adoptable == true && User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="AdoptionInquiries" asp-action="Create" asp-route-id="@item.Id">Adopt</a>
+            }
+               </td>
         </tr>
 }
     </tbody>
