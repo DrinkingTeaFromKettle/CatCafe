@@ -7,7 +7,6 @@ namespace CatCafe.ViewModels
 {
     public class UserCreateInputViewModel
     {
-        /*public RegisterModel.InputModel User { get; set; } = default!;*/
         [Key]
         public Guid Id { get; set; }
         [Required]

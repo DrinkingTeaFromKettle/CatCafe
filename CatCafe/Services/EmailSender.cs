@@ -12,7 +12,7 @@ namespace CatCafe.Services
         {
             _smtpClient = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
             {
-                Credentials = new NetworkCredential("b2ac85bd3bf0e7", "b90b03bae9d0ca"),
+                Credentials = new NetworkCredential( ),
                 EnableSsl = true
             };
         }

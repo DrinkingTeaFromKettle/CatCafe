@@ -1,7 +1,5 @@
 ﻿using CatCafe.DataModels;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 
 namespace CatCafe.Data
 {
@@ -9,8 +7,6 @@ namespace CatCafe.Data
     {
         private static RoleManager<IdentityRole<Guid>>? _roleManager;
         private static UserManager<ApplicationUser>? _userManager;
-
-
 
         public static async Task InitializeAsync(RoleManager<IdentityRole<Guid>> roleManager, UserManager<ApplicationUser> userManager)
         {
@@ -24,12 +20,18 @@ namespace CatCafe.Data
             }
             
             _userManager = userManager;
+            await CreateAdmin("admin@example.com", "Password!1");
+
+        }
+
+        private static async Task CreateAdmin(string email, string password)
+        {
             var applicationUser = new ApplicationUser()
             {
-                Email = "admin@example.com",
-                UserName = "admin@example.com"
+                Email = email,
+                UserName = email
             };
-            var result = await _userManager.CreateAsync(applicationUser, "Password!1");
+            var result = await _userManager.CreateAsync(applicationUser, password);
             if (result.Succeeded)
             {
                 var role = _roleManager.FindByNameAsync("admin").Result;
@@ -44,7 +46,6 @@ namespace CatCafe.Data
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(applicationUser);
                 await _userManager.ConfirmEmailAsync(applicationUser, code);
             }
-
         }
 
         private static async Task CreateRole(string roleName)

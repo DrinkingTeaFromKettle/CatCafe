@@ -36,6 +36,7 @@ namespace CatCafe.Controllers
             var cat = await _context.Cats
                 .Include(a => a.AdoptionInquiries)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (cat == null)
             {
                 return NotFound();
@@ -60,8 +61,6 @@ namespace CatCafe.Controllers
         }
 
         // POST: Cats/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize(Roles = "Employee, Admin")]
         [ValidateAntiForgeryToken]
@@ -105,8 +104,6 @@ namespace CatCafe.Controllers
         }
 
         // POST: Cats/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize(Roles = "Employee, Admin")]
         [ValidateAntiForgeryToken]

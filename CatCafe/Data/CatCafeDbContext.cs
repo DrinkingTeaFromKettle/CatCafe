@@ -1,9 +1,6 @@
 ﻿using CatCafe.DataModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
-using Microsoft.Extensions.Configuration;
-using System.Configuration;
 using Microsoft.AspNetCore.Identity;
 
 namespace CatCafe.Data;
@@ -78,6 +75,7 @@ public class CatCafeDbContext : IdentityDbContext<ApplicationUser, IdentityRole<
             .HasForeignKey(e => e.CatId)
             .IsRequired();
 
+        //Set CreatedOn attribute value on record creation to current date
         if (WebApplication.CreateBuilder().Environment.IsDevelopment())
         {
             modelBuilder.Entity<Cat>()

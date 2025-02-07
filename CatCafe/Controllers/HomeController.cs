@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using CatCafe.DataModels;
 using CatCafe.ViewModels;
 
 namespace CatCafe.Controllers;

@@ -28,7 +28,6 @@ namespace CatCafe.Controllers
         }
 
         [Authorize(Roles = "Employee, Admin")]
-        // GET: AdoptionInquiries
         public async Task<IActionResult> Index()
         {
             var catCafeDbContext = _context.AdoptionInquiry.Include(a => a.User);
@@ -36,7 +35,6 @@ namespace CatCafe.Controllers
         }
 
         [Authorize(Roles = "Employee, Admin")]
-        // GET: AdoptionInquiries/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -47,6 +45,7 @@ namespace CatCafe.Controllers
             var adoptionInquiry = await _context.AdoptionInquiry
                 .Include(a => a.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (adoptionInquiry == null)
             {
                 return NotFound();
@@ -56,27 +55,31 @@ namespace CatCafe.Controllers
         }
 
         [Authorize]
-        // GET: AdoptionInquiries/Create
         public async Task<IActionResult> Create([FromRoute] Guid? id)
         {
+            if(id == null)
+            {
+                return NotFound();
+            }
             var cat = await _context.Cats.FindAsync(id);
-            if(cat.Adoptable == false)
+            if(cat == null || cat.Adoptable == false)
             {
                 return NotFound();
             }
             return View();
         }
 
-        // POST: AdoptionInquiries/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize]
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromForm] AdoptionInquiryViewModel adoptionInquiryViewModel, [FromRoute] Guid Id)
+        public async Task<IActionResult> Create([FromForm] AdoptionInquiryViewModel adoptionInquiryViewModel, [FromRoute] Guid? Id)
         {
             if (ModelState.IsValid)
             {
+                if (Id == null)
+                {
+                    NotFound();
+                }
                 string userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 if(userId == null)
                 {
@@ -87,6 +90,7 @@ namespace CatCafe.Controllers
                 {
                     throw new Exception("No user with id " + userId);
                 }
+
                 var address = new Address()
                 {
                     Country = adoptionInquiryViewModel.Address.Country,
@@ -100,10 +104,7 @@ namespace CatCafe.Controllers
                     User = applicationUser,
                     UserId = applicationUser.Id
                 };
-                if (Id == null)
-                {
-                    NotFound();
-                }
+                
                 var cat = _context.Cats.FirstOrDefault(cat => cat.Id == Id);
                 if (cat == null)
                 {
@@ -113,7 +114,7 @@ namespace CatCafe.Controllers
                 {
                     Id = new Guid(),
                     Cat = cat,
-                    CatId = Id,
+                    CatId = (Guid)Id,
                     User = applicationUser,
                     UserId = applicationUser.Id,
                     Description = adoptionInquiryViewModel.Description,
@@ -132,7 +133,6 @@ namespace CatCafe.Controllers
         }
 
         [Authorize(Roles = "Employee, Admin")]
-        // GET: AdoptionInquiries/Edit/5
         public async Task<IActionResult> Edit([FromRoute] Guid? id)
         {
             if (id == null)
@@ -153,7 +153,6 @@ namespace CatCafe.Controllers
             };
             var model = new AdoptionInquiryEditViewModel()
             {
-                
                 Input = inputModel,
                 StatusList = Enum.GetValues(typeof(InquiryStatus)).Cast<InquiryStatus>().Select(m => new SelectListItem
                 {
@@ -165,11 +164,8 @@ namespace CatCafe.Controllers
             return View(model);
         }
 
-        // POST: AdoptionInquiries/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Employee, Admin")]
         [HttpPost]
+        [Authorize(Roles = "Employee, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute] Guid id, [FromForm] AdoptionInquiryEditInputViewModel Input)
         {
@@ -181,6 +177,10 @@ namespace CatCafe.Controllers
             if (ModelState.IsValid)
             {
                 var adoptonInquiry = await _context.AdoptionInquiry.FindAsync(id);
+                if(adoptonInquiry == null) 
+                {
+                    return NotFound(); 
+                }
                 adoptonInquiry.Description = Input.Description;
                 adoptonInquiry.Status = Input.Status;
                 if(Input.Status == InquiryStatus.Finished)
@@ -218,7 +218,6 @@ namespace CatCafe.Controllers
         }
 
         [Authorize(Roles = "Employee, Admin")]
-        // GET: AdoptionInquiries/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -237,9 +236,8 @@ namespace CatCafe.Controllers
             return View(adoptionInquiry);
         }
 
-        [Authorize(Roles = "Employee, Admin")]
-        // POST: AdoptionInquiries/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Employee, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {

@@ -1,10 +1,8 @@
-﻿using CatCafe.Areas.Identity.Pages.Account;
-using CatCafe.Data;
+﻿using CatCafe.Data;
 using CatCafe.DataModels;
 using CatCafe.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CatCafe.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -33,7 +32,7 @@ namespace CatCafe.Controllers
             _emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
         }
 
-        [Authorize(Roles = "Admin")]
+        
         public async Task<IActionResult> Index()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -51,14 +50,12 @@ namespace CatCafe.Controllers
             return View(userRolesViewModel);
         }
 
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
@@ -73,7 +70,6 @@ namespace CatCafe.Controllers
             return View(thisViewModel);
         }
 
-        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             var model = new UserCreateViewModel
@@ -88,7 +84,7 @@ namespace CatCafe.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromForm] UserCreateInputViewModel user)
         {
             if (ModelState.IsValid)
@@ -109,20 +105,16 @@ namespace CatCafe.Controllers
                         }
                         else
                         {
-                            throw new Exception("Role "+role.ToString()+" does not exist");
+                            throw new Exception("Role " + role.ToString()+" does not exist");
                         }
                     }
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(ApplicationUser);
                     await _userManager.ConfirmEmailAsync(ApplicationUser, code);
-                    
                 }
             }
-            
-
             return Redirect("Index");
         }
 
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit([FromRoute] Guid? id)
         {
             if (id == null)
@@ -143,6 +135,7 @@ namespace CatCafe.Controllers
                 Enum.TryParse(roleString, out Role role);
                 rolesList.Add(role);
             }
+
             var model = new UserEditViewModel
             {
                 User = new UserEditInputViewModel
@@ -159,8 +152,8 @@ namespace CatCafe.Controllers
             };
             return View(model);
         }
+
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromRoute] Guid id, [FromForm] UserEditInputViewModel user)
         {
@@ -168,24 +161,24 @@ namespace CatCafe.Controllers
             {
                 return NotFound();
             }
-            ModelState.Remove("Password");
+
             if (ModelState.IsValid)
             {
-                var ApplicationUser = await _userManager.FindByIdAsync(id.ToString());
-                if (ApplicationUser == null)
+                var applicationUser = await _userManager.FindByIdAsync(id.ToString());
+                if (applicationUser == null)
                 {
                     return NotFound();
                 }
-                ApplicationUser.Email = user.Email;
-                await _userManager.UpdateAsync(ApplicationUser);
-                var roles = await _userManager.GetRolesAsync(ApplicationUser);
-                await _userManager.RemoveFromRolesAsync(ApplicationUser, roles);
+                applicationUser.Email = user.Email;
+                await _userManager.UpdateAsync(applicationUser);
+                var roles = await _userManager.GetRolesAsync(applicationUser);
+                await _userManager.RemoveFromRolesAsync(applicationUser, roles);
                 foreach (var userRole in user.Role)
                 {
                     var role = _roleManager.FindByNameAsync(userRole.ToString()).Result;
                     if (role != null)
                     {
-                        IdentityResult roleresult = await _userManager.AddToRoleAsync(ApplicationUser, role.Name);
+                        IdentityResult roleresult = await _userManager.AddToRoleAsync(applicationUser, role.Name);
                     }
                     else
                     {
@@ -206,7 +199,6 @@ namespace CatCafe.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -230,7 +222,7 @@ namespace CatCafe.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var user = await _userStore.FindByIdAsync(id.ToString(), CancellationToken.None);

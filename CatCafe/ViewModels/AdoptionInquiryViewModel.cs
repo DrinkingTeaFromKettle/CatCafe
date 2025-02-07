@@ -5,8 +5,6 @@ namespace CatCafe.ViewModels
 {
     public class AdoptionInquiryViewModel
     {
-        /*public Guid CatId { get; set; }*/
-        /* public Guid UserId { get; set; }*/
         [StringLength(1000, ErrorMessage = "Maximal {0} lenght is {1}.")]
         public string Description { get; set; }
         [Required(ErrorMessage = "{0} is required.")]
