@@ -64,6 +64,7 @@ namespace CatCafe.Tests
         {
             var httpClient = _factory.CreateClient();
             var response = await httpClient.GetAsync("/cats");
+            
             var responsePage = await response.Content.ReadAsStringAsync();
             response.EnsureSuccessStatusCode();
             Assert.Equal("text/html; charset=utf-8",
@@ -75,6 +76,10 @@ namespace CatCafe.Tests
         {
             var httpClient = _factory.CreateClient();
             var getPageResponse = await httpClient.GetAsync("/cats/create");
+            if (!getPageResponse.RequestMessage.RequestUri.ToString().Contains("/cats/create"))
+            {
+                throw new Exception("Redirected");
+            }
             var antiForgeryCookie = AntiForgeryTokenExtractor.ExtractAntiForgeryCookieValue(getPageResponse);
             var antiForgeryToken = AntiForgeryTokenExtractor.ExtractAntiForgeryToken(await getPageResponse.Content.ReadAsStringAsync());
            var postRequest = new HttpRequestMessage(HttpMethod.Post, "/cats/create");
@@ -84,7 +89,7 @@ namespace CatCafe.Tests
                 new KeyValuePair<string, string>(AntiForgeryTokenExtractor.AntiForgeryFieldName,antiForgeryToken),
                 new KeyValuePair<string, string>("Name","TestCat"),
                 new KeyValuePair<string, string>("Age","9"),
-                new KeyValuePair<string, string>("Description","TestDescriptomj"),
+                new KeyValuePair<string, string>("Description","TestDescription"),
                 new KeyValuePair<string, string>("Status", "Avaliable"),
                 new KeyValuePair<string, string>("Adoptable", "false"),
                 new KeyValuePair<string, string>("DateOfAcquisition", DateTime.Now.ToString()),
@@ -117,6 +122,10 @@ namespace CatCafe.Tests
                 var catId = cat!.Id.ToString();
                 var httpClient = _factory.CreateClient();
                 var getPageResponse = await httpClient.GetAsync("/cats/edit/"+catId);
+                if (!getPageResponse.RequestMessage.RequestUri.ToString().Contains("/cats/edit/"))
+                {
+                    throw new Exception("Redirected");
+                }
                 var antiForgeryCookie = AntiForgeryTokenExtractor.ExtractAntiForgeryCookieValue(getPageResponse);
                 var antiForgeryToken = AntiForgeryTokenExtractor.ExtractAntiForgeryToken(await getPageResponse.Content.ReadAsStringAsync());
                 var postRequest = new HttpRequestMessage(HttpMethod.Post, "/cats/edit/" + catId);
@@ -162,6 +171,11 @@ namespace CatCafe.Tests
 
                 var httpClient = _factory.CreateClient();
                 var getPageResponse = await httpClient.GetAsync("/cats/delete/" + cat!.Id.ToString());
+                //Check for redirection
+                if (!getPageResponse.RequestMessage.RequestUri.ToString().Contains("/cats/delete/"))
+                {
+                    throw new Exception("Redirected");
+                }
                 var antiForgeryCookie = AntiForgeryTokenExtractor.ExtractAntiForgeryCookieValue(getPageResponse);
                 var antiForgeryToken = AntiForgeryTokenExtractor.ExtractAntiForgeryToken(await getPageResponse.Content.ReadAsStringAsync());
                 var postRequest = new HttpRequestMessage(HttpMethod.Post, "/cats/delete/" + cat!.Id.ToString());

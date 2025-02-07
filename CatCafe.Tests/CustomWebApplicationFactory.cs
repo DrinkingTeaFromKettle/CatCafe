@@ -1,4 +1,5 @@
 ﻿using CatCafe.Data;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
@@ -14,6 +15,8 @@ namespace CatCafe.Tests
         {
             builder.ConfigureTestServices(services =>
             {
+                services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+
                 var dbContextDescriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
                     typeof(DbContextOptions<CatCafeDbContext>));
